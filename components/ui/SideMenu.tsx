@@ -22,11 +22,12 @@ export const SideMenu = () => {
             sx={{ backdropFilter: 'blur(4px)', transition: 'all 0.5s ease-out' }}
             onClose={toggleSideMenu}
         >
-            <Box sx={{ width: 250, paddingTop: 5 }}>
+            <Box sx={{ width: 250, paddingTop: { xs: 5, sm: 2 } }}>
 
                 <List>
                     <ListItem>
                         <Input
+                            sx={{ display: { xs: '', sm: 'none' } }}
                             autoFocus
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
@@ -45,7 +46,7 @@ export const SideMenu = () => {
                         />
                     </ListItem>
 
-                    <ListItemButton >
+                    <ListItemButton>
                         <ListItemIcon>
                             <AccountCircleOutlined />
                         </ListItemIcon>
