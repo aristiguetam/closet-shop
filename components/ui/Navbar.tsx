@@ -1,9 +1,21 @@
 import NextLink from "next/link"
 
-import { AppBar, Badge, Box, Button, IconButton, Link, Toolbar, Typography } from '@mui/material';
-import { SearchOutlined, ShoppingCartOutlined } from "@mui/icons-material";
+import { AppBar, Badge, Box, Button, IconButton, Input, InputAdornment, Link, Toolbar, Typography } from '@mui/material';
+import { ClearOutlined, SearchOutlined, ShoppingCartOutlined } from "@mui/icons-material";
+import { useSearchMenu } from "@/hooks/useSearchMenu";
 
 export const Navbar = () => {
+
+    const {
+        asPath,
+        isSearchVisible,
+        searchTerm,
+        onSearchTermNavbar,
+        setSearchTerm,
+        setIsSearchVisible,
+        toggleSideMenu
+    } = useSearchMenu()
+
     return (
         <AppBar>
             <Toolbar>
@@ -16,27 +28,64 @@ export const Navbar = () => {
 
                 <Box flex={1} />
 
-                <Box sx={{ display: {xs: 'none', sm:'block'} }}>
+                <Box className='fadeIn' sx={{ display: isSearchVisible ? 'none' : { xs: 'none', sm: 'block' } }}>
                     <NextLink href='/category/men' passHref legacyBehavior>
                         <Link>
-                            <Button> Hombres</Button>
+                            <Button color={asPath === '/category/men' ? 'primary' : 'info'}> Hombres</Button>
                         </Link>
                     </NextLink>
                     <NextLink href='/category/women' passHref legacyBehavior>
                         <Link>
-                            <Button>Mujeres</Button>
+                            <Button color={asPath === '/category/women' ? 'primary' : 'info'} >Mujeres</Button>
                         </Link>
                     </NextLink>
                     <NextLink href='/category/kid' passHref legacyBehavior>
                         <Link>
-                            <Button>Niños</Button>
+                            <Button color={asPath === '/category/kid' ? 'primary' : 'info'}>Niños</Button>
                         </Link>
                     </NextLink>
                 </Box>
 
                 <Box flex={1} />
 
-                <IconButton>
+                {
+                    isSearchVisible
+                        ? (<Input
+                            sx={{ display: { xs: 'none', sm: 'flex' } }}
+                            className="fadeIn"
+                            autoFocus
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' ? onSearchTermNavbar() : null}
+                            type='text'
+                            placeholder="Buscar..."
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => setIsSearchVisible(false)}
+                                    >
+                                        <ClearOutlined />
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                        />
+                        )
+                        : (
+                            <IconButton
+                                className="fadeIn"
+                                sx={{ display: { xs: 'none', sm: 'flex' } }}
+                                onClick={() => setIsSearchVisible(true)}
+                            >
+                                <SearchOutlined />
+                            </IconButton>
+                        )
+                }
+
+                {/* Pantallas Pequeñas */}
+                <IconButton
+                    sx={{ display: { xs: 'flex', sm: 'none' } }}
+                    onClick={toggleSideMenu}
+                >
                     <SearchOutlined />
                 </IconButton>
 
@@ -50,7 +99,9 @@ export const Navbar = () => {
                     </Link>
                 </NextLink>
 
-                <Button>
+                <Button
+                    onClick={toggleSideMenu}
+                >
                     Menú
                 </Button>
 
