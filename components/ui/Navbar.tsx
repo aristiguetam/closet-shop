@@ -92,7 +92,7 @@ export const Navbar = () => {
                     <SearchOutlined />
                 </IconButton>
 
-                <NextLink href={cart.length === 0 ? '/cart/empty' : '/cart'} passHref legacyBehavior>
+                <NextLink href={'/cart'} passHref legacyBehavior>
                     <Link>
                         <IconButton>
                             <Badge badgeContent={numberOfItems > 9 ? '+9' : numberOfItems} color={"secondary"}>
@@ -112,3 +112,5 @@ export const Navbar = () => {
         </AppBar>
     )
 }
+
+// href={cart.length === 0 ? '/cart/empty' : '/cart'}

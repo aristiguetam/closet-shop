@@ -69,16 +69,16 @@ export const CartList: FC<Props> = ({ editable = false }) => {
 
                             {
                                 editable && (
-                                    <NextLink href={carts.length === 1 ? '/cart/empty' : ''} passHref legacyBehavior>
-                                        <Link>
+                                    // <NextLink href={carts.length === 1 ? '/cart/empty' : ''} passHref legacyBehavior>
+                                        // <Link>
                                             <Button
                                                 onClick={() => removeCartProduct(cart)}
                                                 variant='text'
                                                 color='secondary'>
                                                 Remover
                                             </Button>
-                                        </Link>
-                                    </NextLink>
+                                        // </Link>
+                                    // </NextLink>
                                 )
                             }
 
@@ -91,3 +91,4 @@ export const CartList: FC<Props> = ({ editable = false }) => {
 
     )
 }
+// href={carts.length === 1 ? '/cart/empty' : ''}
