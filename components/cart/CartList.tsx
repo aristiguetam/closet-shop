@@ -1,36 +1,38 @@
+import { FC, useContext } from 'react';
 import NextLink from 'next/link';
 
 import { Box, Button, CardActionArea, CardMedia, Grid, Link, Typography } from "@mui/material"
 
-import { initialData } from "@/database/products"
 import { ItemCounter } from '../ui';
-import { FC } from 'react';
-
-const productsInCart = [
-    initialData.products[0],
-    initialData.products[1],
-    initialData.products[2],
-]
+import { CartContext } from '@/context';
+import { ICartProduct } from '@/interfaces';
 
 interface Props {
     editable?: boolean;
 }
 
-export const CartList: FC<Props> = ({ editable = false}) => {
+export const CartList: FC<Props> = ({ editable = false }) => {
+
+    const { cart: carts, updateCartQuantity, removeCartProduct, } = useContext(CartContext);
+
+    const onNewQuantityValue = (product: ICartProduct, newQuantityValue: number) => {
+        product.quantity = newQuantityValue;
+        updateCartQuantity(product)
+    }
 
     return (
         <>
             {
-                productsInCart.map(product => (
-                    <Grid container key={product.slug} spacing={2} sx={{ mb: 1 }}>
+                carts.map(cart => (
+                    <Grid container key={cart.slug + cart.sizes} spacing={2} sx={{ mb: 1 }}>
 
                         <Grid item xs={3}>
-                            <NextLink href={"/product/slug"} passHref legacyBehavior>
+                            <NextLink href={`/product/${cart.slug}`} passHref legacyBehavior>
                                 <Link>
                                     <CardActionArea>
                                         <CardMedia
                                             component='img'
-                                            image={`/products/${product.images[0]}`}
+                                            image={`/products/${cart.images}`}
                                             sx={{ borderRadius: '5px' }}
                                         />
                                     </CardActionArea>
@@ -40,28 +42,43 @@ export const CartList: FC<Props> = ({ editable = false}) => {
 
                         <Grid item xs={7}>
                             <Box display='flex' flexDirection='column'>
-                                <Typography variant='body1'>{product.title}</Typography>
-                                <Typography variant='body1'>Talla: <strong>M</strong> </Typography>
+                                <Typography variant='body1'>{cart.title}</Typography>
+                                <Typography variant='body1'>Talla: <strong>{cart.sizes}</strong> </Typography>
 
                                 {/* condicional */}
 
                                 {
                                     editable
-                                        ? <ItemCounter />
-                                        : <Typography variant='h5'>1 items</Typography>
+                                        ? (
+                                            <ItemCounter
+                                                currentValue={cart.quantity}
+                                                maxValue={10}
+                                                updatedQuantity={(value) => onNewQuantityValue(cart, value)} />
+                                        )
+                                        : (
+                                            <Typography variant='h5'>{cart.quantity} {cart.quantity > 1 ? 'productos' : 'producto'}</Typography>
+
+                                        )
                                 }
 
                             </Box>
                         </Grid>
 
                         <Grid item xs={2} display='flex' alignItems='center' flexDirection='column'>
-                            <Typography variant='subtitle1'> ${product.price}</Typography>
+                            <Typography variant='subtitle1'> ${cart.price}</Typography>
 
                             {
                                 editable && (
-                                    <Button variant='text' color='secondary'>
-                                        Remover
-                                    </Button>
+                                    <NextLink href={carts.length === 1 ? '/cart/empty' : ''} passHref legacyBehavior>
+                                        <Link>
+                                            <Button
+                                                onClick={() => removeCartProduct(cart)}
+                                                variant='text'
+                                                color='secondary'>
+                                                Remover
+                                            </Button>
+                                        </Link>
+                                    </NextLink>
                                 )
                             }
 

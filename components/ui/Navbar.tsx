@@ -1,10 +1,13 @@
+import { useContext } from "react";
 import NextLink from "next/link"
 
 import { AppBar, Badge, Box, Button, IconButton, Input, InputAdornment, Link, Toolbar, Typography } from '@mui/material';
 import { ClearOutlined, SearchOutlined, ShoppingCartOutlined } from "@mui/icons-material";
-import { useSearchMenu } from "@/hooks/useSearchMenu";
+import { useSearchMenu } from "@/hooks";
+import { CartContext } from "@/context";
 
 export const Navbar = () => {
+    const { numberOfItems, cart } = useContext(CartContext);
 
     const {
         asPath,
@@ -14,7 +17,7 @@ export const Navbar = () => {
         setSearchTerm,
         setIsSearchVisible,
         toggleSideMenu
-    } = useSearchMenu()
+    } = useSearchMenu();
 
     return (
         <AppBar>
@@ -89,10 +92,10 @@ export const Navbar = () => {
                     <SearchOutlined />
                 </IconButton>
 
-                <NextLink href='/cart' passHref legacyBehavior>
+                <NextLink href={cart.length === 0 ? '/cart/empty' : '/cart'} passHref legacyBehavior>
                     <Link>
                         <IconButton>
-                            <Badge badgeContent={2} color={"secondary"}>
+                            <Badge badgeContent={numberOfItems > 9 ? '+9' : numberOfItems} color={"secondary"}>
                                 <ShoppingCartOutlined />
                             </Badge>
                         </IconButton>

@@ -1,11 +1,16 @@
+import { useContext, useState } from "react";
 import { GetServerSideProps, NextPage, GetStaticPaths, GetStaticProps } from "next";
+import { useRouter } from "next/router";
+
 import { Box, Button, Chip, Grid, Typography } from "@mui/material";
 
 import { ProductSlideShow, SizeSelector } from "@/components/products";
 import { ShopLayout } from "@/components/layouts";
 import { ItemCounter } from "@/components/ui";
-import { IProduct } from "@/interfaces";
+
 import { dbProducts } from "@/database";
+import { ICartProduct, IProduct, ISize } from "@/interfaces";
+import { CartContext } from "@/context";
 
 interface Props {
   product: IProduct;
@@ -13,8 +18,42 @@ interface Props {
 
 const ProductPage: NextPage<Props> = ({ product }) => {
 
-  //   const { query } = useRouter();
-  //  const { isLoading, products: product } = useProducts(`products/${query.slug}`);
+  const router = useRouter();
+
+  const { addParoductToCart } = useContext(CartContext);
+
+  const [temCartProduct, setTemCartProduct] = useState<ICartProduct>({
+    _id: product._id,
+    images: product.images[0],
+    price: product.price,
+    sizes: undefined,
+    slug: product.slug,
+    title: product.title,
+    gender: product.gender,
+    quantity: 1,
+  })
+
+  const selectedSize = (size: ISize) => {
+    setTemCartProduct(currentProduct => ({
+      ...currentProduct,
+      sizes: size
+    }));
+  }
+
+  const updatedQuantityValue = (value: number) => {
+    setTemCartProduct(currentProduct => ({
+      ...currentProduct,
+      quantity: value
+    }))
+  }
+
+  const onAddProduct = () => {
+    if (!temCartProduct.sizes) return;
+    
+    addParoductToCart(temCartProduct)
+    
+    router.push('/cart');
+  }
 
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
@@ -33,18 +72,41 @@ const ProductPage: NextPage<Props> = ({ product }) => {
             {/* cantidad */}
             <Box sx={{ my: 2 }}>
               <Typography variant="subtitle2" component='h3'>Cantidad</Typography>
-              <ItemCounter />
+              <ItemCounter
+                currentValue={temCartProduct.quantity}
+                updatedQuantity={updatedQuantityValue}
+                maxValue={product.inStock}
+              />
               <SizeSelector
-                // selectedSize={product.sizes[0]} 
-                sizes={product.sizes} />
+                selectedSize={temCartProduct.sizes}
+                sizes={product.sizes}
+                onSelectedSize={selectedSize}
+              />
+
             </Box>
 
-            {/* Agregar al carrito */}
-            <Button color="secondary" className="circular-btn">
-              Agregar al carrito
-            </Button>
 
-            {/* <Chip label='No hay disponibles' color="error" variant="outlined" /> */}
+            {/* Agregar al carrito */}
+            {
+              (product.inStock > 0)
+                ? (
+                  <Button
+
+                    onClick={onAddProduct}
+                    color="secondary"
+                    className="circular-btn">
+                    {
+                      temCartProduct.sizes
+                        ? 'Agregar al carrito'
+                        : 'Seleccione una talla'
+                    }
+                  </Button>
+                )
+                :
+                (
+                  <Chip label='No hay disponibles' color="error" variant="outlined" />
+                )
+            }
 
             {/* Descripcion */}
             <Box sx={{ mt: 3 }}>
@@ -95,6 +157,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
 
 
+
+
+
+//   const { query } = useRouter();
+//  const { isLoading, products: product } = useProducts(`products/${query.slug}`);
 
 // export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
