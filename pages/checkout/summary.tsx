@@ -3,13 +3,27 @@ import NextLink from 'next/link';
 
 import { Button, Card, CardContent, Divider, Grid, Typography, Box, Link } from "@mui/material"
 
+import { CartContext } from '@/context';
 import { ShopLayout } from "@/components/layouts"
 import { CartList, OrderSummary } from "@/components/cart"
-import { CartContext } from '@/context';
+import { countries } from '@/utils';
 
 const SummaryPage = () => {
 
-    const { numberOfItems } = useContext(CartContext);
+    const { numberOfItems, shippingAddress } = useContext(CartContext);
+
+    if (!shippingAddress) {
+        return <></>
+    }
+
+    const { address, address2, city, country, firstname, lastName, phone, zip } = shippingAddress
+
+    // const countryName = countries.filter(ctr => {
+    //     if(ctr.code === country) {
+    //         return ctr.name
+    //     }
+    // })
+
     return (
         <ShopLayout title={"Resumen de orden"} pageDescription={"Resumen de la orden"}>
 
@@ -38,11 +52,12 @@ const SummaryPage = () => {
                             </Box>
 
 
-                            <Typography>Pedro Aristigueta</Typography>
-                            <Typography>Salamanca Ate</Typography>
-                            <Typography>1522</Typography>
-                            <Typography>Perú</Typography>
-                            <Typography>+51 959734026</Typography>
+                            <Typography>{firstname} {lastName}</Typography>
+                            <Typography>{address} {address2 ? `,${address2}` : ''} </Typography>
+                            <Typography> {city}, {zip} </Typography>
+                            {/* <Typography>{countryName[0].name}</Typography> */}
+                            <Typography>{countries.find(ctr => ctr.code === country)?.name}</Typography>
+                            <Typography>{phone}</Typography>
 
                             <Divider sx={{ my: 1 }} />
 
