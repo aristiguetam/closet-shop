@@ -20,13 +20,13 @@ const ProductPage: NextPage<Props> = ({ product }) => {
 
   const router = useRouter();
 
-  const { addParoductToCart } = useContext(CartContext);
+  const { addProductToCart } = useContext(CartContext);
 
   const [temCartProduct, setTemCartProduct] = useState<ICartProduct>({
     _id: product._id,
-    images: product.images[0],
+    image: product.images[0],
     price: product.price,
-    sizes: undefined,
+    size: undefined,
     slug: product.slug,
     title: product.title,
     gender: product.gender,
@@ -36,7 +36,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
   const selectedSize = (size: ISize) => {
     setTemCartProduct(currentProduct => ({
       ...currentProduct,
-      sizes: size
+      size: size
     }));
   }
 
@@ -48,10 +48,9 @@ const ProductPage: NextPage<Props> = ({ product }) => {
   }
 
   const onAddProduct = () => {
-    if (!temCartProduct.sizes) return;
+    if (!temCartProduct.size) return;
     
-    addParoductToCart(temCartProduct)
-    
+    addProductToCart(temCartProduct)
     router.push('/cart');
   }
 
@@ -78,7 +77,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
                 maxValue={product.inStock}
               />
               <SizeSelector
-                selectedSize={temCartProduct.sizes}
+                selectedSize={temCartProduct.size}
                 sizes={product.sizes}
                 onSelectedSize={selectedSize}
               />
@@ -96,7 +95,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
                     color="secondary"
                     className="circular-btn">
                     {
-                      temCartProduct.sizes
+                      temCartProduct.size
                         ? 'Agregar al carrito'
                         : 'Seleccione una talla'
                     }

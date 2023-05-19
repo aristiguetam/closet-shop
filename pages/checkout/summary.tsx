@@ -1,19 +1,20 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 
 import Cookies from 'js-cookie';
-import { Button, Card, CardContent, Divider, Grid, Typography, Box, Link } from "@mui/material"
+import { Button, Card, CardContent, Divider, Grid, Typography, Box, Link, Chip } from "@mui/material"
 
 import { CartContext } from '@/context';
 import { ShopLayout } from "@/components/layouts"
 import { CartList, OrderSummary } from "@/components/cart"
-import { countries } from '@/utils';
 
 const SummaryPage = () => {
 
     const router = useRouter();
-    const { numberOfItems, shippingAddress } = useContext(CartContext);
+    const { numberOfItems, shippingAddress, createrOrder } = useContext(CartContext);
+    const [isPosting, setIsPosting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         if (!Cookies.get('firstname')) {
@@ -21,17 +22,26 @@ const SummaryPage = () => {
         }
     }, [router])
 
+    const onCreateOrder = async () => {
+        setIsPosting(true);
+
+        const { hasError, message } = await createrOrder();
+
+        if (hasError) {
+            setIsPosting(false)
+            setErrorMessage(message);
+            return
+        }
+
+        router.replace(`/orders/${message}`)
+    }
+
     if (!shippingAddress) {
         return <></>
     }
 
     const { address, address2, city, country, firstname, lastName, phone, zip } = shippingAddress
 
-    // const countryName = countries.filter(ctr => {
-    //     if(ctr.code === country) {
-    //         return ctr.name
-    //     }
-    // })
 
     return (
         <ShopLayout title={"Resumen de orden"} pageDescription={"Resumen de la orden"}>
@@ -64,9 +74,7 @@ const SummaryPage = () => {
                             <Typography>{firstname} {lastName}</Typography>
                             <Typography>{address} {address2 ? `,${address2}` : ''} </Typography>
                             <Typography> {city}, {zip} </Typography>
-                            {/* <Typography>{countryName[0].name}</Typography> */}
                             <Typography>{country}</Typography>
-                            {/* <Typography>{countries.find(ctr => ctr.code === country)?.name}</Typography> */}
                             <Typography>{phone}</Typography>
 
                             <Divider sx={{ my: 1 }} />
@@ -81,10 +89,22 @@ const SummaryPage = () => {
 
                             <OrderSummary />
 
-                            <Box sx={{ mt: 3 }}>
-                                <Button color="secondary" className="circular-btn" fullWidth>
+                            <Box sx={{ mt: 3 }} display='flex' flexDirection='column'>
+                                <Button
+                                    color="secondary"
+                                    className="circular-btn"
+                                    fullWidth
+                                    onClick={onCreateOrder}
+                                    disabled={isPosting}
+                                >
                                     Confirmar Orden
                                 </Button>
+
+                                <Chip
+                                    color='error'
+                                    label={errorMessage}
+                                    sx={{ display: errorMessage ? 'flex' : 'none', mt: 2 }}
+                                />
                             </Box>
 
                         </CardContent>
@@ -97,3 +117,4 @@ const SummaryPage = () => {
 }
 
 export default SummaryPage
+

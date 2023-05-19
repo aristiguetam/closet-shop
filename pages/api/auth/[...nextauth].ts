@@ -1,47 +1,12 @@
-import { dbUsers } from "@/database";
 import NextAuth from "next-auth";
+
 import Credentials from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 
-interface Token {
-  name: string,
-  email: string,
-  picture: string,
-  accessToken: string,
-  sub: string,
-  iat: number,
-  exp: number,
-  jti: string
-  user: User
-}
+import { dbUsers } from "@/database";
+import { Account, NextSession, NextToken, NextUser } from "@/interfaces";
 
-interface Account {
-  provider: string,
-  type: 'oauth' | 'credentials',
-  providerAccountId: string,
-  access_token: string,
-  token_type: string,
-  scope: string
-}
-
-
-interface User {
-  _id: string,
-  name: string,
-  email: string,
-  image?: string
-}
-
-interface Session {
-  accessToken: string,
-  user: {
-    name: string,
-    email: string,
-    image?: string
-  },
-  expires: string
-}
 
 export const authOptions = {
   providers: [
@@ -87,7 +52,7 @@ export const authOptions = {
   //Callbacks
 
   callbacks: {
-    async jwt({ token, account, user }: { token: Token, account: Account, user: User }) {
+    async jwt({ token, account, user }: { token: NextToken, account: Account, user: NextUser }) {
 
       if (account) {
         token.accessToken = account.access_token;
@@ -109,7 +74,7 @@ export const authOptions = {
       return token;
     },
 
-    async session({ session, token, user }: { token: Token, session: Session, user: User }) {
+    async session({ session, token, user }: { token: NextToken, session: NextSession, user: NextUser }) {
       session.accessToken = token.accessToken
       session.user = token.user
 
