@@ -36,7 +36,7 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
     // Crear un arreglo con los productos que la persona quiere
     const productsId = orderItems.map(product => product._id);
-    
+
     await db.connect();
 
     const dbProducts = await Product.find({ _id: { $in: productsId } });
@@ -62,6 +62,7 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         // Todo bien
         const userID = session.user._id;
         const newOrder = new Order({ ...req.body, isPaid: false, user: userID });
+        newOrder.total = Math.round(newOrder.total * 100) / 100;
         await newOrder.save();
         await db.disconnect();
 
