@@ -1,5 +1,6 @@
 import { useEffect, useReducer } from 'react';
 import { useRouter } from 'next/router';
+import { useSession, signOut } from "next-auth/react"
 
 import Cookies from 'js-cookie';
 import axios from 'axios';
@@ -25,27 +26,37 @@ interface Props {
 export const AuthProvider = ({ children }: Props) => {
 
     const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
+    const { data, status } = useSession();
     const router = useRouter();
 
     useEffect(() => {
-        checkToken();
-    }, [])
-
-    const checkToken = async () => {
-
-        if (!Cookies.get('token')) {
-            return;
+        if (status === 'authenticated') {
+            console.log({ user: data.user })
+            dispatch({ type: '[Auth] - Login', payload: data.user as IUser })
         }
+    }, [status, data])
 
-        try {
-            const { data } = await closetApi.get('/user/validate-jwt');
-            const { token, user } = data as { user: IUserLogin, token: string };
-            Cookies.set('token', token);
-            dispatch({ type: '[Auth] - Login', payload: user })
-        } catch (error) {
-            Cookies.remove('token')
-        }
-    }
+
+
+    // useEffect(() => {
+    //     checkToken();
+    // }, [])
+
+    // const checkToken = async () => {
+
+    //     if (!Cookies.get('token')) {
+    //         return;
+    //     }
+
+    //     try {
+    //         const { data } = await closetApi.get('/user/validate-jwt');
+    //         const { token, user } = data as { user: IUserLogin, token: string };
+    //         Cookies.set('token', token);
+    //         dispatch({ type: '[Auth] - Login', payload: user })
+    //     } catch (error) {
+    //         Cookies.remove('token')
+    //     }
+    // }
 
     const loginUser = async (email: string, password: string): Promise<boolean> => {
         try {
@@ -84,9 +95,19 @@ export const AuthProvider = ({ children }: Props) => {
     }
 
     const logout = () => {
-        Cookies.remove('token');
         Cookies.remove('cart');
-        router.reload();
+        Cookies.remove('firstname');
+        Cookies.remove('lastName');
+        Cookies.remove('address');
+        Cookies.remove('address2');
+        Cookies.remove('city');
+        Cookies.remove('zip');
+        Cookies.remove('country');
+        Cookies.remove('phone');
+
+        signOut();
+        // router.reload();
+        // Cookies.remove('token');
     }
 
     return (
