@@ -1,13 +1,13 @@
 import { GetServerSideProps, NextPage } from 'next';
-import NextLink from 'next/link';
+import { getSession } from 'next-auth/react';
 
-import { Box, Card, CardContent, Chip, Divider, Grid, Link, Typography } from "@mui/material";
+import { PayPalButtons } from "@paypal/react-paypal-js";
+import { Box, Card, CardContent, Chip, Divider, Grid, Typography } from "@mui/material";
+import { CreditCardOffOutlined, CreditScoreOutlined } from '@mui/icons-material';
 
+import { dbOrders } from '@/database';
 import { CartList, OrderSummary } from "@/components/cart";
 import { ShopLayout } from "@/components/layouts";
-import { CreditCardOffOutlined, CreditScoreOutlined } from '@mui/icons-material';
-import { getSession } from 'next-auth/react';
-import { dbOrders } from '@/database';
 import { IOrder } from '@/interfaces';
 
 interface Props {
@@ -93,7 +93,26 @@ const OrderPage: NextPage<Props> = ({ order }: Props) => {
                                         ) :
                                         (
 
-                                            <h1> PAGAR </h1>
+                                            <PayPalButtons
+                                                createOrder={(data, actions) => {
+                                                    return actions.order.create({
+                                                        purchase_units: [
+                                                            {
+                                                                amount: {
+                                                                    value: `${order.total}`,
+                                                                },
+                                                            },
+                                                        ],
+                                                    });
+                                                }}
+                                                onApprove={(data, actions: any) => {
+                                                    return actions.order.capture().then((details: any) => {
+                                                        console.log({ details })
+                                                        const name = details.payer.name.given_name;
+                                                        // alert(`Transaction completed by ${name}`);
+                                                    });
+                                                }}
+                                            />
                                         )
                                 }
 
