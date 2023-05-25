@@ -4,7 +4,7 @@ import Cookie from 'js-cookie';
 
 import { CartContext, cartReducer } from './';
 import { ICartProduct, IOrder, ShippingAddress } from '@/interfaces';
-import { closetApi } from '@/api';
+import { closetApi } from '@/closetApi';
 import axios from 'axios';
 
 export interface CartState {

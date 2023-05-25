@@ -8,7 +8,7 @@ export interface IProduct {
     slug: string;
     tags: string[];
     title: string;
-    type: IType;
+    type: IType ;
     gender: 'men' | 'women' | 'kid' | 'unisex';
     createdAt: string;
     updatedAt: string;
@@ -16,3 +16,4 @@ export interface IProduct {
 
 export type ISize = 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL';
 export type IType = 'shirts' | 'pants' | 'hoodies' | 'hats';
+export type Gender = 'men' | 'women' | 'kid' | 'unisex';

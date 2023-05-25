@@ -10,43 +10,44 @@ import { dbOrders } from '@/database';
 import { ShopLayout } from '@/components/layouts'
 import { IOrder } from '@/interfaces';
 
+const columns: GridColDef[] = [
+    { field: "id", headerName: 'ID', width: 100 },
+    { field: "fullname", headerName: 'Nombre Completo', width: 300 },
+
+    {
+        field: 'paid',
+        headerName: 'Pagada',
+        description: 'Muestra información si esta pagada la orden o no',
+        width: 200,
+        renderCell: (params: GridRenderCellParams) => {
+            return (
+                params.row.paid
+                    ? <Chip color='success' label='Pagada' variant='outlined' />
+                    : <Chip color='error' label='No Pagada' variant='outlined' />
+            )
+        }
+    },
+
+    {
+        field: 'redirect', headerName: 'Ver orden', sortable: false, width: 200, renderCell: (params: GridRenderCellParams) => {
+            return (
+                <NextLink href={`/orders/${params.row.orderId}`} passHref legacyBehavior>
+                    <Link underline='always'>
+                        Orders
+                    </Link>
+                </NextLink>
+            )
+        }
+    }
+
+]
+
 interface Props {
     orders: IOrder[]
 }
+
 const HistoryPage: NextPage<Props> = ({ orders }) => {
-
-    const columns: GridColDef[] = [
-        { field: "id", headerName: 'ID', width: 100 },
-        { field: "fullname", headerName: 'Nombre Completo', width: 300 },
-
-        {
-            field: 'paid',
-            headerName: 'Pagada',
-            description: 'Muestra información si esta pagada la orden o no',
-            width: 200,
-            renderCell: (params: GridRenderCellParams) => {
-                return (
-                    params.row.paid
-                        ? <Chip color='success' label='Pagada' variant='outlined' />
-                        : <Chip color='error' label='No Pagada' variant='outlined' />
-                )
-            }
-        },
-
-        {
-            field: 'redirect', headerName: 'Ver orden', sortable: false, width: 200, renderCell: (params: GridRenderCellParams) => {
-                return (
-                    <NextLink href={`/orders/${params.row.orderId}`} passHref legacyBehavior>
-                        <Link underline='always'>
-                            Orders
-                        </Link>
-                    </NextLink>
-                )
-            }
-        }
-
-    ]
-
+   
     const row = orders.map((order, index) => ({   
             id: index + 1,
             fullname: `${order.ShippingAddress.firstname} ${order.ShippingAddress.lastName}`,

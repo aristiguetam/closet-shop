@@ -33,8 +33,8 @@ const orderSchema = new Schema({
 
 },
     {
-        timestamps: true,
-    })
+        timestamps: true
+    });
 
 const Order: Model<IOrder> = mongoose.models.Order || model('Order', orderSchema);
 

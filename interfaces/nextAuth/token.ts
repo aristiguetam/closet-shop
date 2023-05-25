@@ -1,4 +1,5 @@
-import { User } from "."
+import { NextUser } from "./user"
+
 
 export interface NextToken {
     name: string,
@@ -9,5 +10,5 @@ export interface NextToken {
     iat: number,
     exp: number,
     jti: string
-    user: User
+    user: NextUser
   }
