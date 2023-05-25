@@ -12,18 +12,18 @@ interface Props {
 
 export const ProductSlideShow: FC<Props> = ({ images }) => {
     return (
-        <Slide 
+        <Slide
             easing="ease"
             duration={7000}
             indicators
         >
             {
                 images.map(image => {
-                    const url = `/products/${image}`;
+                    // const url = `/products/${image}`;
                     return (
                         <div className={styles['each-slide']} key={image}>
                             <div style={{
-                                backgroundImage: `url( ${url})`,
+                                backgroundImage: `url( ${image})`,
                                 backgroundSize: 'cover',
                             }} >
 

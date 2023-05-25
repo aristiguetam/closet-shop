@@ -100,11 +100,16 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                 const formData = new FormData();
                 formData.append('file', file);
                 const { data } = await closetApi.post<{ message: string }>('/admin/upload', formData);
-                console.log({ data });
+
+                setValue('images', [...getValues('images'), data.message], { shouldValidate: true })
             }
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const onDeleteImage = (image: string) => {
+        setValue('images', getValues('images').filter(img => img !== image), { shouldValidate: true })
     }
 
     const onSubmitForm = async (form: FormData) => {
@@ -176,7 +181,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                             variant="filled"
                             fullWidth
                             multiline
-                            rows={5}
+                            rows={6}
                             sx={{ mb: 1 }}
                             {...register('description', {
                                 required: 'Este campo es requerido',
@@ -184,8 +189,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                             })}
                             error={!!errors.description}
                             helperText={errors.description?.message}
-
-
                         />
 
                         <TextField
@@ -345,24 +348,29 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                             />
 
                             <Chip
-                                label="Es necesario al 2 imagenes"
+                                label="Es necesario 2 imagenes"
                                 color='error'
                                 variant='outlined'
+                                sx={{ display: getValues('images').length < 2 ? 'flex' : 'none' }}
                             />
 
                             <Grid container spacing={2}>
                                 {
-                                    product.images.map(img => (
+                                    getValues('images').map(img => (
                                         <Grid item xs={4} sm={3} key={img}>
                                             <Card>
                                                 <CardMedia
                                                     component='img'
                                                     className='fadeIn'
-                                                    image={`/products/${img}`}
+                                                    image={`${img}`}
                                                     alt={img}
                                                 />
                                                 <CardActions>
-                                                    <Button fullWidth color="error">
+                                                    <Button
+                                                        fullWidth
+                                                        color="error"
+                                                        onClick={() => onDeleteImage(img)}
+                                                    >
                                                         Borrar
                                                     </Button>
                                                 </CardActions>
@@ -389,6 +397,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
     const { slug = '' } = query;
+    
     let product: IProduct | null;
 
     if (slug === 'new') {

@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { isValidObjectId } from 'mongoose';
 
+import { v2 as cloudinary } from 'cloudinary'
+cloudinary.config(process.env.CLOUDINARY_URL || "");
+
 import { db } from '@/database';
 import { IProduct } from '@/interfaces';
 import { Product } from '@/models';
@@ -32,9 +35,15 @@ const getProductBySlug = async (req: NextApiRequest, res: NextApiResponse<Data>)
 
     await db.disconnect();
 
-    //TODO: tendremos que actualizar las imagenes
+    const updatedProducts = products.map((product) => {
+        product.images = product.images.map(image => {
+            return image.includes('http') ? image : `${process.env.HOST_NAME}products/${image}`
+        })
+        return product;
+    })
 
-    res.status(200).json(products);
+
+    res.status(200).json(updatedProducts);
 }
 
 const updateProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
@@ -63,6 +72,16 @@ const updateProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
         }
 
         //TODO: elminar fotos en cloudinary
+        // https://res.cloudinary.com/dqarieowd/image/upload/v1685039534/xa3nwoycdzh7wd0udlkj.webp
+
+        product.images.forEach(async (image) => {
+            if (!images.includes(image)) {
+                const [fileId, Extension] = image.substring(image.lastIndexOf('/') + 1).split('.')
+                console.log({ image, fileId, Extension });
+                await cloudinary.uploader.destroy(fileId);
+            }
+        })
+
         await product.updateOne(req.body);
         await db.disconnect();
 
