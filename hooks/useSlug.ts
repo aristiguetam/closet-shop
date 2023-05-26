@@ -46,7 +46,7 @@ export const useSlug = ( product : IProduct) => {
         })
 
         return () => subscription.unsubscribe()
-    }, [watch])
+    }, [watch, setValue])
 
     const onChangeSize = (size: ISize) => {
         const currentSizes = getValues('sizes');
