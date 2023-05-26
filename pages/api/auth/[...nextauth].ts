@@ -1,14 +1,13 @@
 import NextAuth from "next-auth";
-
+import type { NextAuthOptions } from 'next-auth'
 import Credentials from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 
 import { dbUsers } from "@/database";
-import { Account, NextSession, NextToken, NextUser } from "@/interfaces";
 
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
 
     Credentials({
@@ -50,16 +49,16 @@ export const authOptions = {
 
 
   //Callbacks
-
+  // : { token: NextToken, account: Account, user: NextUser }
   callbacks: {
-    async jwt({ token, account, user }: { token: NextToken, account: Account, user: NextUser }) {
+    async jwt({ token, account, user }) {
 
       if (account) {
         token.accessToken = account.access_token;
         switch (account.type) {
 
           case 'oauth':
-            token.user = await dbUsers.oAuthToDbUser(user.email, user.name)
+            token.user = await dbUsers.oAuthToDbUser(user.email as string, user.name as string)
             break;
 
           case 'credentials':
@@ -74,9 +73,10 @@ export const authOptions = {
       return token;
     },
 
-    async session({ session, token, user }: { token: NextToken, session: NextSession, user: NextUser }) {
-      session.accessToken = token.accessToken
-      session.user = token.user
+    // : { token: NextToken, session: NextSession, user: NextUser }
+    async session({ session, token, user }) {
+      (session as any).accessToken = token.accessToken
+      session.user = token.user as any
 
       return session;
     }
@@ -85,4 +85,4 @@ export const authOptions = {
 
 }
 
-export default NextAuth(authOptions as any);
+export default NextAuth(authOptions);

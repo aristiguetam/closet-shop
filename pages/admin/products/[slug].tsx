@@ -12,6 +12,7 @@ import { Gender, IProduct, ISize, IType } from '@/interfaces';
 import { closetApi } from '@/closetApi';
 import { Product } from '@/models';
 import { useRouter } from 'next/router';
+import { useSlug } from '@/hooks';
 
 
 const validTypes = ['shirts', 'pants', 'hoodies', 'hats']
@@ -38,107 +39,23 @@ interface Props {
 
 const ProductAdminPage: FC<Props> = ({ product }) => {
 
-    const router = useRouter();
-    const [newTagValue, setNewTagValue] = useState('');
-    const [isSaving, setIsSaving] = useState(false);
-
-    const fileInputRef = useRef<HTMLInputElement>(null);
-
-    const { register, handleSubmit, formState: { errors }, getValues, setValue, watch, reset } = useForm({
-        defaultValues: product
-    });
-
-    useEffect(() => {
-        const subscription = watch((value, { name, type }) => {
-            if (name === 'title') {
-                const newSlug = value.title?.trim()
-                    .replaceAll(' ', '_')
-                    .replaceAll("'", "")
-                    .toLocaleLowerCase() || ""
-                setValue('slug', newSlug)
-            }
-        })
-
-        return () => subscription.unsubscribe()
-    }, [watch])
-
-    const onChangeSize = (size: ISize) => {
-        const currentSizes = getValues('sizes');
-        if (currentSizes.includes(size)) {
-            return setValue('sizes', currentSizes.filter(s => s !== size), { shouldValidate: true });
-        }
-        setValue('sizes', [...currentSizes, size], { shouldValidate: true });
-
-    }
-
-    const onNewTag = () => {
-        const newTag = newTagValue.trim().toLocaleLowerCase();
-
-        setNewTagValue('');
-
-        const currentTags = getValues('tags');
-
-        if (currentTags.includes(newTag)) {
-            return;
-        }
-        currentTags.push(newTag);
-    }
-
-    const onDeleteTag = (tag: string) => {
-        const updatedTags = getValues('tags').filter(t => t !== tag);
-        setValue('tags', updatedTags, { shouldValidate: true })
-    }
-
-    const onFileSelected = async ({ target }: ChangeEvent<HTMLInputElement>) => {
-
-        if (!target.files || target.files.length === 0) {
-            return;
-        }
-
-        try {
-            for (const file of target.files) {
-                const formData = new FormData();
-                formData.append('file', file);
-                const { data } = await closetApi.post<{ message: string }>('/admin/upload', formData);
-
-                setValue('images', [...getValues('images'), data.message], { shouldValidate: true })
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const onDeleteImage = (image: string) => {
-        setValue('images', getValues('images').filter(img => img !== image), { shouldValidate: true })
-    }
-
-    const onSubmitForm = async (form: FormData) => {
-        if (form.images.length < 2) {
-            return alert('Minimo 2 imagenes');
-        }
-
-        setIsSaving(true);
-
-        try {
-            const { data } = await closetApi({
-                url: '/admin/products',
-                method: form._id ? 'PUT' : 'POST',
-                data: form,
-            })
-
-            console.log({ data })
-            if (!form._id) {
-                router.replace(`/admin/products/${form.slug}`)
-            } else {
-                setIsSaving(false)
-            }
-
-        } catch (error) {
-            console.log(error);
-            setIsSaving(false);
-
-        }
-    }
+    const {
+        errors,
+        isSaving,
+        fileInputRef,
+        newTagValue,
+        setNewTagValue,
+        onNewTag,
+        handleSubmit,
+        onSubmitForm,
+        register,
+        getValues,
+        setValue,
+        onChangeSize,
+        onDeleteImage,
+        onDeleteTag,
+        onFileSelected,
+    } = useSlug(product);
 
     return (
         <AdminLayout
@@ -397,7 +314,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
     const { slug = '' } = query;
-    
+
     let product: IProduct | null;
 
     if (slug === 'new') {

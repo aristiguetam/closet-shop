@@ -37,16 +37,6 @@ const LoginPage = () => {
 
     const onLoginUser = async ({ email, password }: FormData) => {
         setShowError(false);
-
-        // const isValidLogin = await loginUser(email, password);
-        // if (!isValidLogin) {
-        //     setShowError(true);
-        //     setTimeout(() => setShowError(false), 3000)
-        //     return;
-        // }
-        // const destination = router.query.p?.toString() || '/'
-        // router.replace(destination);
-
         await signIn('credentials', { email, password })
     }
 
@@ -178,4 +168,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
     }
 }
 
-export default LoginPage    
+export default LoginPage;
+
+
+    // const isValidLogin = await loginUser(email, password);
+        // if (!isValidLogin) {
+        //     setShowError(true);
+        //     setTimeout(() => setShowError(false), 3000)
+        //     return;
+        // }
+        // const destination = router.query.p?.toString() || '/'
+        // router.replace(destination);

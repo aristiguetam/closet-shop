@@ -1,11 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { getServerSession } from 'next-auth';
 
-import { getSession } from 'next-auth/react';
-
-import { IOrder } from '@/interfaces';
 import { db } from '@/database';
+import { authOptions } from '../auth/[...nextauth]';
+import { IOrder } from '@/interfaces';
 import { Order, Product } from '@/models';
-import { getToken } from 'next-auth/jwt';
 
 type Data =
     | { message: string }
@@ -27,8 +26,9 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     const { orderItems, total } = req.body as IOrder;
 
     //Verificar que tengamos un usuario
-    const session: any = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    // console.log( session?.user._id)
+    // const session: any = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const session: any = await getServerSession(req, res, authOptions );
+    console.log({ session })
 
     if (!session) {
         return res.status(401).json({ message: 'Debe de estar autenticado para hacer esto' })
