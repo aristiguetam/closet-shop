@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 
-import { getSession, signIn, getProviders } from 'next-auth/react';
+import { getServerSession } from 'next-auth';
+import { signIn, getProviders } from 'next-auth/react';
+
 import { Box, Button, Chip, Divider, Grid, Link, TextField, Typography } from "@mui/material"
 import { ErrorOutline } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
 
+import { authOptions } from '../api/auth/[...nextauth]';
 import { AuthLayout } from "@/components/layouts"
 import { validations } from '@/utils';
-import { useRouter } from 'next/router';
 
 type FormData = {
     email: string,
@@ -147,8 +150,8 @@ const LoginPage = () => {
 }
 
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-    const session = await getSession({ req });
+export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
+    const session = await getServerSession( req, res, authOptions );
 
     const { p = '/' } = query;
 

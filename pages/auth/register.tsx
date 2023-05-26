@@ -3,14 +3,16 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 
+import { signIn } from 'next-auth/react';
+import { getServerSession } from 'next-auth';
+import { useForm } from 'react-hook-form';
 import { Box, Button, Chip, Grid, Link, TextField, Typography } from "@mui/material";
 
+import { authOptions } from '../api/auth/[...nextauth]';
 import { AuthContext } from '@/context';
 import { AuthLayout } from "@/components/layouts"
-import { useForm } from 'react-hook-form';
 import { validations } from '@/utils';
 import { ErrorOutline } from '@mui/icons-material';
-import { getSession, signIn } from 'next-auth/react';
 
 type FormData = {
     name: string,
@@ -135,8 +137,8 @@ const RegisterPage = () => {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-    const session = await getSession({ req });
+export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
+    const session = await getServerSession( req, res, authOptions );
 
     const { p = '/' } = query;
 
