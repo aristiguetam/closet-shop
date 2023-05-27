@@ -27,6 +27,12 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(url);
     }
 
+    if(session){
+        if (requestedPage.includes('/auth/login' || '/auth/register')) {
+            return NextResponse.redirect(new URL('/', req.url));
+        }
+    }
+
     if (requestedPage.includes('/api/admin') && !validRoles.includes(session.user.role)) {
 
         return new Response(JSON.stringify({ message: 'No autorizado' }), {
