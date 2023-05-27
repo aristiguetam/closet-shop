@@ -150,31 +150,27 @@ const LoginPage = () => {
 }
 
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
-    const session = await getServerSession(req, res, authOptions);
+// export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
+//     const session = await getServerSession(req, res, authOptions);
 
-    const { p = '/' } = query;
+//     const { p = '/' } = query;
 
-    try {
-        if (session) {
-            return {
-                redirect: {
-                    destination: p.toString(),
-                    permanent: false
-                }
-            }
-        }
-    } catch (error) {
-        console.log({ error })
-    }
+//         if (session) {
+//             return {
+//                 redirect: {
+//                     destination: p.toString(),
+//                     permanent: false
+//                 }
+//             }
+//         }
 
 
-    return {
-        props: {
+//     return {
+//         props: {
 
-        }
-    }
-}
+//         }
+//     }
+// }
 
 export default LoginPage;
 

@@ -37,7 +37,7 @@ export const getProductByTerm = async (term: string): Promise<IProduct[]> => {
     await db.connect();
     const products = await Product.find({
         $text: { $search: term }
-    }).select('title images price inStock slug -_id').lean();
+    }).select('title images price inStock slug -_id').limit(10).skip(0).lean();
     await db.disconnect();
 
     const updatedProducts = products.map((product) => {
