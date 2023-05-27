@@ -9,6 +9,7 @@ export async function middleware(req: NextRequest) {
     // console.log({ session })
     const requestedPage = req.nextUrl.pathname;
     const validRoles = ['admin', 'super-user', 'SEO']
+    const validRolesClient = ['client']
 
     if (!session) {
         const url = req.nextUrl.clone();
@@ -27,8 +28,8 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(url);
     }
 
-    if(session){
-        if (requestedPage.includes('/auth/login' || '/auth/register')) {
+    if (session) {
+        if (requestedPage.includes('/auth/login' || '/auth/register') && validRolesClient.includes(session.user.role) && validRoles.includes(session.user.role)) {
             return NextResponse.redirect(new URL('/', req.url));
         }
     }
@@ -43,7 +44,7 @@ export async function middleware(req: NextRequest) {
         });
     };
 
-    
+
     if (requestedPage.includes('/admin') && !validRoles.includes(session.user.role)) {
 
         return NextResponse.redirect(new URL('/', req.url));
@@ -55,5 +56,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/checkout/:path*', '/orders/:path*', '/admin/:path*', '/api/orders/:path*', '/api/admin/:path*', '/auth/login', '/auth/register'],
+    matcher: ['/checkout/:path*', '/orders/:path*', '/admin/:path*', '/api/orders/:path*', '/api/admin/:path*'],
 };
