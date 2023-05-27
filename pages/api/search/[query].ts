@@ -6,6 +6,7 @@ import { Product } from '@/models';
 
 type Data =
     | { message: string }
+    | { error: string }
     | IProduct[]
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
@@ -29,13 +30,24 @@ const searchProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) =
 
     query = query.toString().toLowerCase();
 
-    await db.connect();
+    try {
+        await db.connect();
 
-    const products = await Product.find({
-        $text: { $search: query }
-    }).select('title images price inStock slug -_id').lean();
+        const products = await Product.find({
+            $text: { $search: query }
+        }).select('title images price inStock slug -_id').limit(10).skip(0).lean();
 
-    await db.disconnect();
+        await db.disconnect();
 
-    return res.status(200).json(products);
+        return res.status(200).json(products);
+    } catch (error: any) {
+    
+        console.log(error);
+    
+        await db.disconnect();
+
+        return res.status(500).json({ message: `Revise logs del servidor`, error: error.message  });
+    }
+
+
 }

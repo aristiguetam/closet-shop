@@ -120,20 +120,20 @@ const LoginPage = () => {
                             {
                                 Object.values(providers).map((provider: any) => {
 
-                                    if(provider.id === "credentials") {
-                                        return(
+                                    if (provider.id === "credentials") {
+                                        return (
                                             <div key={'credentials'}></div>
                                         )
                                     }
                                     return (
                                         <Button
-                                         key={provider.id}
-                                         variant='outlined'
-                                         fullWidth
-                                         color='primary'
-                                         sx={{mb:1}}
-                                         onClick={() => signIn(provider.id)}
-                                         >
+                                            key={provider.id}
+                                            variant='outlined'
+                                            fullWidth
+                                            color='primary'
+                                            sx={{ mb: 1 }}
+                                            onClick={() => signIn(provider.id)}
+                                        >
                                             {provider.name}
                                         </Button>
                                     )
@@ -151,18 +151,23 @@ const LoginPage = () => {
 
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
-    const session = await getServerSession( req, res, authOptions );
+    const session = await getServerSession(req, res, authOptions);
 
     const { p = '/' } = query;
 
-    if (session) {
-        return {
-            redirect: {
-                destination: p.toString(),
-                permanent: false
+    try {
+        if (session) {
+            return {
+                redirect: {
+                    destination: p.toString(),
+                    permanent: false
+                }
             }
         }
+    } catch (error) {
+        console.log({ error })
     }
+
 
     return {
         props: {
