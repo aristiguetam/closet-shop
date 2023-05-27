@@ -27,6 +27,12 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(url);
     }
 
+    if(session){
+        if (requestedPage.includes('/auth/login' || '/auth/register')) {
+            return NextResponse.redirect(new URL('/', req.url));
+        }
+    }
+
     if (requestedPage.includes('/api/admin') && !validRoles.includes(session.user.role)) {
 
         return new Response(JSON.stringify({ message: 'No autorizado' }), {
@@ -49,5 +55,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/checkout/:path*', '/orders/:path*', '/admin/:path*', '/api/orders/:path*', '/api/admin/:path*'],
+    matcher: ['/checkout/:path*', '/orders/:path*', '/admin/:path*', '/api/orders/:path*', '/api/admin/:path*', '/auth/login', '/auth/register'],
 };
