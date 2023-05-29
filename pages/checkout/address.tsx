@@ -43,10 +43,10 @@ const AddressPage = () => {
         defaultValues: getAddressFromCookies()
     });
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        reset(getAddressFromCookies());
-    }, [reset])
+    //     reset(getAddressFromCookies());
+    // }, [reset])
 
 
     const onAddress = ({ address, city, country, firstname, lastName, phone, zip, address2 }: FormData) => {
