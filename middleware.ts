@@ -28,11 +28,11 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(url);
     }
 
-    if (session) {
-        if (requestedPage.includes('/auth/login' || '/auth/register') && validRolesClient.includes(session.user.role) && validRoles.includes(session.user.role)) {
-            return NextResponse.redirect(new URL('/', req.url));
-        }
-    }
+    // if (session) {
+    //     if (requestedPage.includes('/auth/login' || '/auth/register') && validRolesClient.includes(session.user.role) && validRoles.includes(session.user.role)) {
+    //         return NextResponse.redirect(new URL('/', req.url));
+    //     }
+    // }
 
     if (requestedPage.includes('/api/admin') && !validRoles.includes(session.user.role)) {
 
