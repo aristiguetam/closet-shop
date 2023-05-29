@@ -9,7 +9,6 @@ export async function middleware(req: NextRequest) {
     // console.log({ session })
     const requestedPage = req.nextUrl.pathname;
     const validRoles = ['admin', 'super-user', 'SEO']
-    const validRolesClient = ['client']
 
     if (!session) {
         const url = req.nextUrl.clone();
@@ -52,6 +51,7 @@ export async function middleware(req: NextRequest) {
 
 
     return NextResponse.next();
+    
 
 }
 
