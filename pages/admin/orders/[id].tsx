@@ -17,8 +17,6 @@ const OrderAdminPage: NextPage<Props> = ({ order }: Props) => {
     const { isPaid, _id, numberOfItems, ShippingAddress, orderItems, subTotal, tax, total } = order;
     const { firstname, lastName, city, address2, address, phone, country, zip } = ShippingAddress;
 
-
-
     return (
         <AdminLayout title={`Resumen de la orden`}  subTitle={`ordenId: ${_id}`} icon={<AirplaneTicketOutlined/>} >
 

@@ -57,7 +57,7 @@ const ProductsPage: NextPage = () => {
 
     if (!data && !error) return <></>
 
-    const row = data!.map(product => ({
+    const row = data!.map((product) => ({
         id: product._id,
         img: product.images[0],
         title: product.title,

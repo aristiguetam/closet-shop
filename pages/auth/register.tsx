@@ -137,25 +137,25 @@ const RegisterPage = () => {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
-    const session = await getServerSession( req, res, authOptions );
+// export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
+//     const session = await getServerSession( req, res, authOptions );
 
-    const { p = '/' } = query;
+//     const { p = '/' } = query;
 
-    if (session) {
-        return {
-            redirect: {
-                destination: p.toString(),
-                permanent: false
-            }
-        }
-    }
+//     if (session) {
+//         return {
+//             redirect: {
+//                 destination: p.toString(),
+//                 permanent: false
+//             }
+//         }
+//     }
 
-    return {
-        props: {
+//     return {
+//         props: {
 
-        }
-    }
-}
+//         }
+//     }
+// }
 
 export default RegisterPage;

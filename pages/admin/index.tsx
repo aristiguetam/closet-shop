@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import useSWR from 'swr';
 import { Grid, Typography } from '@mui/material'
 import { AccessTimeOutlined, AttachMoneyOutlined, CancelPresentationOutlined, CategoryOutlined, CreditCardOffOutlined, DashboardOutlined, GroupOutlined, ProductionQuantityLimitsOutlined } from '@mui/icons-material'
 
 import { AdminLayout } from '@/components/layouts'
 import { SummaryTile } from '@/components/admin'
 import { DasboardSummaryResponse } from '@/interfaces';
+import useSWR from 'swr';
 
 const DashboardPage = () => {
 
@@ -18,7 +18,7 @@ const DashboardPage = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            console.log('Tick')
+            // console.log('Tick')
             setRefreshIn(refreshIn => refreshIn > 0 ? refreshIn - 1 : 30)
         }, 1000)
 

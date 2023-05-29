@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { NextPage } from 'next';
 
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
@@ -8,6 +7,7 @@ import { Chip, Grid } from "@mui/material"
 import { useOrders } from '@/hooks';
 import { AdminLayout } from "@/components/layouts"
 import { IUser } from '@/interfaces';
+import { IOrder } from '../../interfaces/order';
 
 const columns: GridColDef[] = [
     { field: 'id', headerName: 'Orden ID', width: 250 },
@@ -49,14 +49,14 @@ const OrdersPage: NextPage = () => {
 
     if (!data && !error) return <></>
 
-    const row = data!.map(order => ({
-        id         : order._id,
-        email      : (order.user as IUser).email,
-        name       : (order.user as IUser).name,
-        total      : order.total,
-        isPaid     : order.isPaid,
+    const row = data!.map((order) => ({
+        id: order._id,
+        email: (order.user as IUser).email,
+        name: (order.user as IUser).name,
+        total: order.total,
+        isPaid: order.isPaid,
         noProductos: order.numberOfItems,
-        createdAt  : order.createdAt,
+        createdAt: order.createdAt,
 
     }));
 
