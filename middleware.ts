@@ -8,50 +8,43 @@ export async function middleware(req: NextRequest) {
     //informacion del usuario
     // console.log({ session })
     const requestedPage = req.nextUrl.pathname;
-    const validRoles = ['admin', 'super-user', 'SEO']
+    // const validRoles = ['admin', 'super-user', 'SEO']
 
     if (!session) {
         const url = req.nextUrl.clone();
         url.pathname = `/auth/login`;
         url.search = `p=${requestedPage}`;
 
-        if (requestedPage.includes('/api')) {
-            return new Response(JSON.stringify({ message: 'No autorizado' }), {
-                status: 401,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-        };
+        // if (requestedPage.includes('/api')) {
+        //     return new Response(JSON.stringify({ message: 'No autorizado' }), {
+        //         status: 401,
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         }
+        //     });
+        // };
 
         return NextResponse.redirect(url);
     }
+    
+    // if (requestedPage.includes('/api/admin') && !validRoles.includes(session.user.role)) {
 
-    // if (session) {
-    //     if (requestedPage.includes('/auth/login' || '/auth/register') && validRolesClient.includes(session.user.role) && validRoles.includes(session.user.role)) {
-    //         return NextResponse.redirect(new URL('/', req.url));
-    //     }
-    // }
-
-    if (requestedPage.includes('/api/admin') && !validRoles.includes(session.user.role)) {
-
-        return new Response(JSON.stringify({ message: 'No autorizado' }), {
-            status: 401,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-    };
+    //     return new Response(JSON.stringify({ message: 'No autorizado' }), {
+    //         status: 401,
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         }
+    //     });
+    // };
 
 
-    if (requestedPage.includes('/admin') && !validRoles.includes(session.user.role)) {
+    // if (requestedPage.includes('/admin') && !validRoles.includes(session.user.role)) {
 
-        return NextResponse.redirect(new URL('/', req.url));
-    };
+    //     return NextResponse.redirect(new URL('/', req.url));
+    // };
 
 
     return NextResponse.next();
-    
 
 }
 
