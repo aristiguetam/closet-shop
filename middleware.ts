@@ -8,7 +8,7 @@ export async function middleware(req: NextRequest) {
     //informacion del usuario
     // console.log({ session })
     const requestedPage = req.nextUrl.pathname;
-    // const validRoles = ['admin', 'super-user', 'SEO']
+    const validRoles = ['admin', 'super-user', 'SEO']
 
     if (!session) {
         const url = req.nextUrl.clone();
@@ -20,21 +20,21 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(url);
     }
     
-    // if (requestedPage.includes('/api/admin') && !validRoles.includes(session.user.role)) {
+    if (requestedPage.includes('/api/admin') && !validRoles.includes(session.user.role)) {
 
-    //     return new Response(JSON.stringify({ message: 'No autorizado' }), {
-    //         status: 401,
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         }
-    //     });
-    // };
+        return new Response(JSON.stringify({ message: 'No autorizado' }), {
+            status: 401,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    };
 
 
-    // if (requestedPage.includes('/admin') && !validRoles.includes(session.user.role)) {
+    if (requestedPage.includes('/admin') && !validRoles.includes(session.user.role)) {
 
-    //     return NextResponse.redirect(new URL('/', req.url));
-    // };
+        return NextResponse.redirect(new URL('/', req.url));
+    };
 
 
     return NextResponse.next();
@@ -42,5 +42,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: [ '/orders/:path*', '/admin/:path*', '/api/orders/:path*', '/api/admin/:path*'],
+    matcher: [  '/admin/:path*',  '/api/admin/:path*'],
 };

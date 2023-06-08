@@ -196,7 +196,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, res }
     const session = await getServerSession(req, res, authOptions);
 
     const { p = '/auth/login' } = query;
-
+   
         if (!session) {
             return {
                 redirect: {
