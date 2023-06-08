@@ -8,6 +8,9 @@ import { countries } from "@/utils"
 import Cookies from "js-cookie";
 import { useContext, useEffect } from "react";
 import { CartContext } from "@/context";
+import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 
 type FormData = {
@@ -187,6 +190,28 @@ const AddressPage = () => {
 
         </ShopLayout>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
+    const session = await getServerSession(req, res, authOptions);
+
+    const { p = '/auth/login' } = query;
+
+        if (!session) {
+            return {
+                redirect: {
+                    destination: p.toString(),
+                    permanent: false
+                }
+            }
+        }
+
+
+    return {
+        props: {
+
+        }
+    }
 }
 
 export default AddressPage
